@@ -6,8 +6,7 @@ var dbFile = 'db.json';
 // Everything is stored here
 
 var db = {
-    users: {},
-    alarms: []
+    users: {}
 };
 
 // Read db file on startup and save on exit

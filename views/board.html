@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Drawing Board</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+  </head>
+  <body>
+    <h2>Drawing Board</h2>
+    <form id="submit-drawing">
+      <input type="text" name="username">
+      <input type="submit">
+    </form>
+
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="https://apps-static.flock.co/js-sdk/0.1.0/flock.js"></script>
+
+    <script type="text/javascript">
+
+      let drawingForm = $('#submit-drawing')
+
+      drawingForm.on('submit', (evt) => {
+        console.log(evt)
+        evt.preventDefault()
+        const username = drawingForm.serialize().split("=")[1]
+
+        $.ajax({
+          type: "POST",
+          url: '/create',
+          data: { id: null, title: 'some data', text: username },
+          success: () => flock.close()
+        });
+
+      })
+
+    </script>
+  </body>
+</html>

@@ -4,14 +4,19 @@
   "description": "Alarms for Flock",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon -e js,html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Riva FZC",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.16.1",
     "chrono-node": "^1.2.5",
     "express": "^4.14.1",
     "flockos": "0.0.6",
-    "mustache": "^2.3.0"
+    "jquery": "^3.1.1",
+    "mustache": "^2.3.0",
+    "nodemon": "^1.11.0",
+    "nunjucks": "^3.0.0"
   }
 }
