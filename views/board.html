@@ -15,18 +15,49 @@
     <script type="text/javascript" src="https://apps-static.flock.co/js-sdk/0.1.0/flock.js"></script>
 
     <script type="text/javascript">
+      function getParameterByName(name, url) {
+          if (!url) {
+            url = window.location.href;
+          }
+          name = name.replace(/[\[\]]/g, "\\$&");
+          var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+              results = regex.exec(url);
+          if (!results) return null;
+          if (!results[2]) return '';
+          return decodeURIComponent(results[2].replace(/\+/g, " "));
+      }
+
+      const serialize = function(obj) {
+        var str = [];
+        for(var p in obj)
+          if (obj.hasOwnProperty(p)) {
+            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+          }
+        return str.join("&");
+      }
 
       let drawingForm = $('#submit-drawing')
 
       drawingForm.on('submit', (evt) => {
-        console.log(evt)
         evt.preventDefault()
         const username = drawingForm.serialize().split("=")[1]
 
+        console.log('FULL STRING', document.location.href)
+
+        const flockEventToken = getParameterByName('flockEventToken', document.location.href)
+        const eventParam = getParameterByName('flockEvent', document.location.href)
+        const eventObj = JSON.parse(eventParam)
+        eventObj.text = username
+        eventObj.token = flockEventToken
+
+        let serializedData = serialize(eventObj)
+
+        // console.log('SERIALIZED DATA', serializedData)
+        
         $.ajax({
           type: "POST",
           url: '/create',
-          data: { id: null, title: 'some data', text: username },
+          data: serializedData,
           success: () => flock.close()
         });
 

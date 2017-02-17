@@ -16,7 +16,7 @@ nunjucks.configure(`${__dirname}/views`, {
 app.use(express.static(`${__dirname}/public`))
 app.set('view engine', 'html')
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: true}))
 
 
 flock.appId = config.appId;
@@ -30,6 +30,10 @@ flock.events.on('app.install', function (event, callback) {
     callback();
 });
 
+flock.events.on('client.openAttachmentWidget', function (event, callback) {
+  console.log('Modal Widget Opened', event)
+})
+
 app.get('/', (req, res) => {
   res.render('index');
 })
@@ -40,30 +44,20 @@ app.get('/board', (req, res) => {
 
 
 app.post('/create', (req, res) => {
-  let query = decodeURIComponent(req.headers.referer);
-  let url_parts = url.parse(req.headers.referer, true);
-  let flockEventObj = url_parts['query']['flockEvent']
-  let userId = flockEventObj['userId']
-  let chat = flockEventObj['chat']
+  let userId = req.body.userId
+  let chat = req.body.chat
+  let text = req.body.text
+  let token = req.body.token
 
-  flock.callMethod('chat.sendMessage', store.getToken(userId), {
+  flock.callMethod('chat.sendMessage', token, {
       to: chat,
-      text: "Here is your server",
-      attachments: [{
-      "description": "drawing board",
-      "views": {
-          "widget": { "src": "https://drawingboard-qqtudaqxcu.now.sh/", "width": 400, "height": 400 }
-      },
-      "buttons": [{
-          "name": "Send",
-          "action": { "type": "openWidget", "desktopType": "modal", "mobileType": "modal", "url": "" },
-          "id": "Send"
-      }, {
-          "name": "Cancel",
-          "action": { "type": "openWidget", "desktopType": "sidebar", "mobileType": "modal", "url": "" },
-          "id": "Cancel"
-      }]
-    }]
+      text: text,
+  }, function(error, response){
+    if (!error) {
+        console.log('uid for message: ' + response.uid);
+    } else {
+        console.log('error sending message: ' + error);
+    }
   })
 
 })
